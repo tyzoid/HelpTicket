@@ -1,0 +1,12 @@
+name: HelpTicket
+main: tk.tyzoid.plugins.helpTicket.HelpTicket
+version: 0.0.1a
+author: Tyzoid
+permissions:
+    helpticket.*:
+        description: Gives access to all helpticket commands
+        children:
+            helpticket.send: true
+    helpticket.send:
+        description: Allows people to use rainbow mode. (Use with care - can create an eyesore)
+        default: OP
