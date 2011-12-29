@@ -1,45 +1,42 @@
-package tk.tyzoid.plugins.helpTicket;
+package tk.tyzoid.plugins;
 
-import java.util.HashMap;
-
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import tk.tyzoid.plugins.helpTicket.PListener;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class HelpTicket extends JavaPlugin {
-	String pluginname = "colors";
+	String pluginname = "HelpTicket";
 	
-    private final PListener playerListener = new PListener(this);
-    public settings cSettings = new settings();
+    private final cmdExecuter cmdExecuter = new cmdExecuter(this);
+    public settings cSettings = new settings(this);
     public PermissionHandler permissionHandler;
     public boolean permissionsExists = false;
     public boolean useSuperperms = false;
 
+	public FileConfiguration config;
+    
     public void onDisable() {
         System.out.println("[" + pluginname +"] " + pluginname + " is closing...");
     }
 
     public void onEnable() {
-        // TODO: Place any custom enable code here including the registration of any events
-
-        // Register our events
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Highest, this);
+      
+    	getCommand("newticket").setExecutor(cmdExecuter);
+    	getCommand("nticket").setExecutor(cmdExecuter);
+    	getCommand("htreload").setExecutor(cmdExecuter);
+		getCommand("htr").setExecutor(cmdExecuter);
         
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println("[" + pluginname + "] Starting " + pluginname + " v" + pdfFile.getVersion() + "...");
         setupPermissions();
-        cSettings.readSettings();
+        cSettings.loadConfiguration();
     }
     
     private void setupPermissions() {
@@ -76,4 +73,26 @@ public class HelpTicket extends JavaPlugin {
     		return p.hasPermission(node);
     	}
     }
+    
+	public int getLines(){
+	    config = getConfig();
+	    int amnt = config.getInt("NumberOfLogLinesRead"); 
+	    return amnt;
+	}
+	
+	public int getUUID(){
+	    config = getConfig();
+	    int amnt = config.getInt("UUID"); 
+	    return amnt;
+	}
+
+	public void reloadData(Player p) {
+		reloadConfig();
+		if(p == null){
+			System.out.println(ChatColor.GREEN + "HelpTicket Reloaded!");	
+		}else{
+			p.sendMessage(ChatColor.GREEN + "HelpTicket Reloaded!");
+		}
+	}
+    
 }
